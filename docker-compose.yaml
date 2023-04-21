@@ -56,6 +56,19 @@ services:
       - JWT_SECRET=secret
       - API_AUTH_URL=http://api-auth:3001
 
+  api-tickets:
+    container_name: api-tickets
+    build: api-tickets
+    restart: always
+    ports:
+      - 3003:3003
+    networks:
+      - backend
+    environment:
+      - DATABASE_URL=mongodb://root:root@mongo:27017
+      - JWT_SECRET=secret
+      - API_AUTH_URL=http://api-auth:3001
+
 networks:
   backend:
     driver: bridge
