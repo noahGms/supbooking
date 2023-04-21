@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    networks:
+        - backend
+
+  rabbitmq:
+    image: rabbitmq:latest
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - backend
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: api-gateway
+    restart: always
+    ports:
+      - 8000:8000
+    networks:
+      - backend
+
+  api-auth:
+    container_name: api-auth
+    build: api-auth
+    restart: always
+    ports:
+      - 3001:3001
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
