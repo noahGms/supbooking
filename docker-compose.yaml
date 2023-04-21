@@ -4,11 +4,13 @@ services:
   mongo:
     image: mongo:latest
     restart: always
+    ports:
+      - 27017:27017
+    networks:
+        - backend
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    networks:
-        - backend
 
   rabbitmq:
     image: rabbitmq:latest
@@ -37,6 +39,8 @@ services:
       - 3001:3001
     networks:
       - backend
+    environment:
+      - DATABASE_URL=mongodb://root:root@mongo:27017
 
 networks:
   backend:
