@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import {setupDatabase} from "./config/db.js";
+import concertRouter from "./router/concert.router.js";
 
 (async () => {
   const app = express();
@@ -13,9 +14,7 @@ import {setupDatabase} from "./config/db.js";
 
   await setupDatabase();
 
-  app.get('/', (req, res) => {
-    return res.send('Hello World from API-CONCERTS!');
-  });
+  app.use('/', concertRouter);
 
   const port = 3002;
   app.listen(port, () => {
