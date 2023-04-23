@@ -1,15 +1,11 @@
-import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
 export const isAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    await jwt.decode(token, process.env.JWT_SECRET);
-
     let user;
     const response = await axios.get(process.env.API_AUTH_URL + '/whoami', {
       headers: {
-        'Authorization': 'Bearer ' + token
+        Cookie: req.headers.cookie,
       },
     });
     user = response.data.data;

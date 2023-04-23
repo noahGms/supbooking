@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import {setupDatabase} from "./config/db.js";
 import authRouter from "./router/auth.router.js";
 import dotenv from 'dotenv';
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(express.urlencoded({extended: true}));
   app.use(morgan('dev'));
   app.use(helmet());
+  app.use(cookieParser());
 
   await setupDatabase();
 

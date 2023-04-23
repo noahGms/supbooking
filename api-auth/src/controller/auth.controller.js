@@ -36,10 +36,15 @@ export async function login(req, res) {
 
     const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
 
-    return res.json({
+    res.cookie('token_bearer', token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+
+    return res.status(200).json({
       message: 'Login success !',
       token_bearer: token,
-    }, 200);
+    });
   } catch (error) {
     return res.json({message: error.message}, 400);
   }
