@@ -2,6 +2,11 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import {setupDatabase} from "./config/db.js";
+import dotenv from 'dotenv';
+
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 (async () => {
   const app = express();
@@ -13,7 +18,7 @@ import {setupDatabase} from "./config/db.js";
 
   await setupDatabase();
 
-  app.get('/', (req, res) => {
+  app.get('/tickets', (req, res) => {
     return res.json({message: 'Hello World from API-TICKETS !'})
   });
 

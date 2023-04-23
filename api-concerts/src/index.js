@@ -3,6 +3,11 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import {setupDatabase} from "./config/db.js";
 import concertRouter from "./router/concert.router.js";
+import dotenv from 'dotenv';
+
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 (async () => {
   const app = express();
@@ -14,7 +19,7 @@ import concertRouter from "./router/concert.router.js";
 
   await setupDatabase();
 
-  app.use('/', concertRouter);
+  app.use('/concerts', concertRouter);
 
   const port = 3002;
   app.listen(port, () => {
