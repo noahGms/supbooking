@@ -20,6 +20,10 @@ const paymentSchema = new mongoose.Schema(
       type: Date,
       required: false,
     },
+    cancelledAt: {
+      type: Date,
+      required: false,
+    },
   },
   { timestamps: true }
 );

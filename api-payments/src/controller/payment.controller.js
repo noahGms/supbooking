@@ -1,8 +1,24 @@
-import { createPaymentSchema } from "../validator/payment.validator.js";
+import {createPaymentSchema} from "../validator/payment.validator.js";
 import jwt from 'jsonwebtoken';
 import Payment from "../model/payment.model.js";
 import axios from "axios";
 import {sendConfirmationSms} from "../service/payment.service.js";
+import paymentMapper from "../mapper/payment.mapper.js";
+
+export async function findOneByTicketId(req, res) {
+  const ticketId = req.params.ticketId;
+
+  try {
+    const payment = await Payment.findOne({ticket: ticketId});
+
+    return res.status(200).json({
+      message: 'Payment found!',
+      data: paymentMapper(payment),
+    });
+  } catch (error) {
+    return res.status(400).json({message: error.message});
+  }
+}
 
 export async function processPayment(req, res) {
   const body = req.body;
@@ -82,6 +98,27 @@ export async function confirmPayment(req, res) {
 
     return res.status(200).json({
       message: 'Payment confirmed successfully!'
+    });
+  } catch (error) {
+    return res.status(400).json({message: error.message});
+  }
+}
+
+export async function cancelPayment(req, res) {
+  const id = req.params.id;
+
+  try {
+    const payment = await Payment.findById(id);
+
+    if (!payment) {
+      throw new Error('Payment not found!');
+    }
+
+    payment.cancelledAt = new Date();
+    await payment.save();
+
+    return res.status(200).json({
+      message: 'Payment cancelled successfully!'
     });
   } catch (error) {
     return res.status(400).json({message: error.message});
