@@ -4,10 +4,6 @@ import {isAuth} from '../middleware/auth.middleware.js';
 
 const paymentRouter = Router();
 
-paymentRouter.get('/', (req, res) => {
-  return res.json({ message: 'GET /payments' });
-});
-
 paymentRouter.post('/process', isAuth, processPayment);
 paymentRouter.get('/confirm/:token', isAuth, confirmPayment);
 
