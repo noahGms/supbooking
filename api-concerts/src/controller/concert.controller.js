@@ -103,7 +103,7 @@ export async function buyTicket(req, res) {
       throw new Error('Concert not found !');
     }
 
-    const response = await axios.post(process.env.API_TICKET_URL, {
+    const response = await axios.post(process.env.API_TICKETS_URL, {
       concertId: concert._id,
     }, {
       headers: {
