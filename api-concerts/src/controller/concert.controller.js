@@ -103,16 +103,17 @@ export async function buyTicket(req, res) {
       throw new Error('Concert not found !');
     }
 
-    const response = await axios.post(process.env.API_TICKETS_URL, {
+    // create ticket from tickets service
+    const ticketResponse = await axios.post(process.env.API_TICKETS_URL, {
       concertId: concert._id,
     }, {
       headers: {
         Cookie: req.headers.cookie,
       },
     });
+    const ticket = ticketResponse.data.data;
 
-    const ticket = response.data.data;
-
+    // process payment from payments service
     const paymentResponse = await axios.post(`${process.env.API_PAYMENTS_URL}/process`, {
       ticketId: ticket.id,
     }, {
@@ -120,15 +121,16 @@ export async function buyTicket(req, res) {
         Cookie: req.headers.cookie,
       },
     });
+    const confirmToken = paymentResponse.data.data.confirmToken;
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: 'Ticket bought !',
       data: {
         ...ticket,
       },
-      confirmToken: paymentResponse.data.data.confirmToken,
+      confirmToken: confirmToken,
     });
   } catch (error) {
-    return res.json({message: error.message}, 400);
+    return res.status(400).json({message: error.message});
   }
 }

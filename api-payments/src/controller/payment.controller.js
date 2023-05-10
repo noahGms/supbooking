@@ -2,7 +2,7 @@ import { createPaymentSchema } from "../validator/payment.validator.js";
 import jwt from 'jsonwebtoken';
 import Payment from "../model/payment.model.js";
 import axios from "axios";
-import twilio from 'twilio';
+import {sendConfirmationSms} from "../service/payment.service.js";
 
 export async function processPayment(req, res) {
   const body = req.body;
@@ -10,7 +10,8 @@ export async function processPayment(req, res) {
   try {
     const value = await createPaymentSchema.validateAsync(body);
 
-    const ticketResponse = await axios.get(process.env.API_TICKETS_URL + '/' + value.ticketId, {
+    // get ticket info from tickets service
+    const ticketResponse = await axios.get(`${process.env.API_TICKETS_URL}/${value.ticketId}`, {
       headers: {
         Cookie: req.headers.cookie,
       }
@@ -22,6 +23,7 @@ export async function processPayment(req, res) {
       user: req.user.id,
     });
 
+    // sign temporary token for confirmation
     const token = jwt.sign({
       paymentId: payment.id,
       ticketId: ticket.id,
@@ -31,28 +33,16 @@ export async function processPayment(req, res) {
     payment.token = token;
     await payment.save();
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioNumber = process.env.TWILIO_NUMBER;
-    
-    if (accountSid && authToken && twilioNumber) {
-      const client = twilio(accountSid, authToken);
+    await sendConfirmationSms(req.user, token)
 
-      await client.messages.create({
-        body: 'Confirm your payment: ' + process.env.API_PAYMENTS_URL + '/confirm/' + token,
-        from: twilioNumber,
-        to: req.user.phone_number,
-      });
-    }
-
-    return res.json({
+    return res.status(200).json({
       message: 'Payment processed successfully!',
       data: {
         confirmToken: token,
       },
     });
   } catch (error) {
-    return res.json({message: error.message}, 400);
+    return res.status(400).json({message: error.message});
   }
 }
 
@@ -68,17 +58,19 @@ export async function confirmPayment(req, res) {
       throw new Error('Payment not found!');
     }
 
-    const ticketResponse = await axios.get(process.env.API_TICKETS_URL + '/' + decoded.ticketId, {
+    // get ticket info from tickets service
+    const ticketResponse = await axios.get(`${process.env.API_TICKETS_URL}/${decoded.ticketId}`, {
       headers: {
         Cookie: req.headers.cookie,
       }
     });
     const ticket = ticketResponse.data.data;
 
-    if (ticket.status === 'sold') {
-      throw new Error('Ticket already sold!');
+    if (ticket.status === 'paid') {
+      throw new Error('Ticket already paid!');
     }
 
+    // update ticket status to paid in tickets service
     await axios.put(`${process.env.API_TICKETS_URL}/${decoded.ticketId}/paid`, {}, {
       headers: {
         Cookie: req.headers.cookie,
@@ -88,8 +80,10 @@ export async function confirmPayment(req, res) {
     payment.confirmedAt = new Date();
     await payment.save();
 
-    return res.json({message: 'Payment confirmed successfully!'});
+    return res.status(200).json({
+      message: 'Payment confirmed successfully!'
+    });
   } catch (error) {
-    return res.json({message: error.message}, 400);
+    return res.status(400).json({message: error.message});
   }
 }
