@@ -72,6 +72,19 @@ services:
       - API_AUTH_URL=http://api-auth:3001
       - API_CONCERTS_URL=http://api-concerts:3002
 
+  api-payments:
+    container_name: api-payments
+    build: api-payments
+    restart: always
+    ports:
+      - 3004:3004
+    networks:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mongodb://root:root@mongo:27017
+      - API_AUTH_URL=http://api-auth:3001
+
 networks:
   backend:
     driver: bridge
