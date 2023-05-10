@@ -1,6 +1,7 @@
 import Concert from "../model/concert.model.js";
 import concertMapper from "../mapper/concert.mapper.js";
 import {createConcertSchema, updateConcertSchema} from "../validator/concert.validator.js";
+import axios from 'axios';
 
 export async function findAll(req, res) {
   const concerts = await Concert.find();
@@ -89,6 +90,31 @@ export async function destroy(req, res) {
     return res.json({
       message: 'Concert deleted !',
     }, 200);
+  } catch (error) {
+    return res.json({message: error.message}, 400);
+  }
+}
+
+export async function buyTicket(req, res) {
+  try {
+    const concert = await Concert.findById(req.params.id);
+
+    if (!concert) {
+      throw new Error('Concert not found !');
+    }
+
+    const response = await axios.post(process.env.API_TICKET_URL, {
+      concertId: concert._id,
+    }, {
+      headers: {
+        Cookie: req.headers.cookie,
+      },
+    });
+
+    return res.status(201).json({
+      message: 'Ticket bought !',
+      ticket: response.data.data,
+    });
   } catch (error) {
     return res.json({message: error.message}, 400);
   }
