@@ -111,9 +111,22 @@ export async function buyTicket(req, res) {
       },
     });
 
+    const ticket = response.data.data;
+
+    const paymentResponse = await axios.post(`${process.env.API_PAYMENTS_URL}/process`, {
+      ticketId: ticket.id,
+    }, {
+      headers: {
+        Cookie: req.headers.cookie,
+      },
+    });
+
     return res.status(201).json({
       message: 'Ticket bought !',
-      ticket: response.data.data,
+      data: {
+        ...ticket,
+      },
+      confirmToken: paymentResponse.data.data.confirmToken,
     });
   } catch (error) {
     return res.json({message: error.message}, 400);

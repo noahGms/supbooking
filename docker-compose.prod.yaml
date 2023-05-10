@@ -57,6 +57,7 @@ services:
       - DATABASE_URL=mongodb://root:root@mongo:27017
       - API_AUTH_URL=http://api-auth:3001
       - API_TICKETS_URL=http://api-tickets:3003
+      - API_PAYMENTS_URL=http://api-payments:3004
 
   api-tickets:
     container_name: api-tickets
@@ -83,7 +84,13 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=mongodb://root:root@mongo:27017
+      - JWT_SECRET=secret
       - API_AUTH_URL=http://api-auth:3001
+      - API_CONCERTS_URL=http://api-concerts:3002
+      - API_PAYMENTS_URL=http://api-payments:3004
+      - TWILIO_ACCOUNT_SID=
+      - TWILIO_AUTH_TOKEN=
+      - TWILIO_NUMBER=
 
 networks:
   backend:

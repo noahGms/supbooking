@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import {setupDatabase} from "./config/db.js";
 import dotenv from 'dotenv';
+import paymentRouter from './router/payment.router.js';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
@@ -18,14 +19,10 @@ if (process.env.NODE_ENV !== 'production') {
 
   await setupDatabase();
 
-  app.use('/payments', (req, res) => {
-    return res.json({
-      message: 'Welcome on payments API',
-    });
-  });
+  app.use('/payments', paymentRouter);
 
   const port = 3004;
   app.listen(port, () => {
-    console.log(`API-CONCERTS running on http://localhost:${port} !`);
+    console.log(`API-PAYMENTS running on http://localhost:${port} !`);
   });
 })();
