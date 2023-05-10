@@ -57,6 +57,7 @@ services:
       - DATABASE_URL=mongodb://root:root@mongo:27017
       - JWT_SECRET=secret
       - API_AUTH_URL=http://api-auth:3001
+      - API_TICKETS_URL=http://api-tickets:3003
 
   api-tickets:
     container_name: api-tickets
@@ -71,6 +72,7 @@ services:
       - DATABASE_URL=mongodb://root:root@mongo:27017
       - JWT_SECRET=secret
       - API_AUTH_URL=http://api-auth:3001
+      - API_CONCERTS_URL=http://api-concerts:3002
 
 networks:
   backend:
