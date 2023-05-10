@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import {setupDatabase} from "./config/db.js";
 import dotenv from 'dotenv';
+import ticketRouter from './router/ticket.router.js';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
@@ -18,9 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
 
   await setupDatabase();
 
-  app.get('/tickets', (req, res) => {
-    return res.json({message: 'Hello World from API-TICKETS !'})
-  });
+  app.use('/tickets', ticketRouter);
 
   const port = 3003;
   app.listen(port, () => {
