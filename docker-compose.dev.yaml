@@ -12,15 +12,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
 
-  rabbitmq:
-    image: rabbitmq:latest
-    restart: always
-    ports:
-      - 5672:5672
-      - 15672:15672
-    networks:
-      - backend
-
 networks:
   backend:
     driver: bridge
