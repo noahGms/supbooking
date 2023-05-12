@@ -3,134 +3,157 @@ import concertMapper from "../mapper/concert.mapper.js";
 import {createConcertSchema, updateConcertSchema} from "../validator/concert.validator.js";
 import axios from 'axios';
 
-export async function findAll(req, res) {
-  const concerts = await Concert.find();
-  return res.json({
-    data: concerts.map(concert => concertMapper(concert)),
-  }, 200);
-}
+class ConcertController {
+  /**
+   * GET /concerts
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async findAll(req, res) {
+    const concerts = await Concert.find();
 
-export async function findOne(req, res) {
-  try {
-    const concert = await Concert.findById(req.params.id);
+    return res.json({
+      data: concerts.map(concert => concertMapper(concert)),
+    }, 200);
+  }
 
-    if (!concert) {
-      throw new Error('Concert not found !');
-    }
+  /**
+   * GET /concerts/:id
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async findOne(req, res) {
+    const concert = req.concert;
 
     return res.json({
       data: concertMapper(concert),
     }, 200);
-  } catch (error) {
-    return res.json({message: error.message}, 404);
   }
-}
 
-export async function create(req, res) {
-  const body = req.body;
+  /**
+   * POST /concerts
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async create(req, res) {
+    const body = req.body;
 
-  try {
-    const value = await createConcertSchema.validateAsync(body);
-    const concertAlreadyExist = await Concert.findOne({name: value.name});
+    try {
+      const value = await createConcertSchema.validateAsync(body);
+      const concertAlreadyExist = await Concert.findOne({name: value.name});
 
-    if (concertAlreadyExist) {
-      throw new Error('Concert already exist !');
+      if (concertAlreadyExist) {
+        throw new Error('Concert already exist !');
+      }
+
+      const concert = await Concert.create(body);
+
+      return res.json({
+        message: 'Concert created !',
+        data: concertMapper(concert),
+      }, 201);
+    } catch (error) {
+      return res.json({message: error.message}, 400);
     }
-
-    const concert = await Concert.create(body);
-
-    return res.json({
-      message: 'Concert created !',
-      data: concertMapper(concert),
-    }, 201);
-  } catch (error) {
-    return res.json({message: error.message}, 400);
   }
-}
 
-export async function update(req, res) {
-  const body = req.body;
+  /**
+   * PUT /concerts/:id
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async update(req, res) {
+    const body = req.body;
+    const concert = req.concert;
 
-  try {
-    const concert = await Concert.findById(req.params.id);
+    try {
+      const value = await updateConcertSchema.validateAsync(body);
 
-    if (!concert) {
-      throw new Error('Concert not found !');
+      await Concert.updateOne({
+        _id: concert._id,
+      }, {
+        $set: value,
+      });
+
+      return res.json({
+        message: 'Concert updated !',
+      }, 200);
+    } catch (error) {
+      return res.json({message: error.message}, 400);
     }
-
-    const value = await updateConcertSchema.validateAsync(body);
-
-    await Concert.updateOne({
-      _id: req.params.id,
-    }, {
-      $set: value,
-    });
-
-    return res.json({
-      message: 'Concert updated !',
-      data: concertMapper(concert),
-    }, 200);
-  } catch (error) {
-    return res.json({message: error.message}, 400);
   }
-}
 
-export async function destroy(req, res) {
-  try {
-    const concert = await Concert.findById(req.params.id);
+  /**
+   * DELETE /concerts/:id
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async destroy(req, res) {
+    const concert = req.concert;
 
-    if (!concert) {
-      throw new Error('Concert not found !');
+    try {
+      await Concert.deleteOne({
+        _id: concert._id,
+      });
+
+      return res.json({
+        message: 'Concert deleted !',
+      }, 200);
+    } catch (error) {
+      return res.json({message: error.message}, 400);
     }
-
-    await Concert.deleteOne({
-      _id: req.params.id,
-    });
-
-    return res.json({
-      message: 'Concert deleted !',
-    }, 200);
-  } catch (error) {
-    return res.json({message: error.message}, 400);
   }
-}
 
-export async function buyTicket(req, res) {
-  try {
-    const concert = await Concert.findById(req.params.id);
+  /**
+   * POST /concerts/:id/buy
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async buyTicket(req, res) {
+    const concert = req.concert;
 
-    if (!concert) {
-      throw new Error('Concert not found !');
+    try {
+      // create ticket from tickets service
+      const ticketResponse = await axios.post(process.env.API_TICKETS_URL, {
+        concertId: concert._id,
+      }, {
+        headers: {
+          Cookie: req.headers.cookie,
+        },
+      });
+      const ticket = ticketResponse.data.data;
+
+      // process payment from payments service
+      const paymentResponse = await axios.post(`${process.env.API_PAYMENTS_URL}/process`, {
+        ticketId: ticket.id,
+      }, {
+        headers: {
+          Cookie: req.headers.cookie,
+        },
+      });
+      const confirmToken = paymentResponse.data.data.confirmToken;
+
+      return res.status(200).json({
+        message: 'Ticket bought !',
+        data: ticket,
+        confirmToken: confirmToken,
+      });
+    } catch (error) {
+      return res.status(400).json({message: error.message});
     }
-
-    // create ticket from tickets service
-    const ticketResponse = await axios.post(process.env.API_TICKETS_URL, {
-      concertId: concert._id,
-    }, {
-      headers: {
-        Cookie: req.headers.cookie,
-      },
-    });
-    const ticket = ticketResponse.data.data;
-
-    // process payment from payments service
-    const paymentResponse = await axios.post(`${process.env.API_PAYMENTS_URL}/process`, {
-      ticketId: ticket.id,
-    }, {
-      headers: {
-        Cookie: req.headers.cookie,
-      },
-    });
-    const confirmToken = paymentResponse.data.data.confirmToken;
-
-    return res.status(200).json({
-      message: 'Ticket bought !',
-      data: {
-        ...ticket,
-      },
-      confirmToken: confirmToken,
-    });
-  } catch (error) {
-    return res.status(400).json({message: error.message});
   }
 }
+
+export default new ConcertController();

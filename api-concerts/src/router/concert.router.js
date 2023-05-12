@@ -1,15 +1,15 @@
 import {Router} from 'express';
 import {isAdmin, isAuth} from "../middleware/auth.middleware.js";
-import {create, destroy, findAll, findOne, update, buyTicket} from "../controller/concert.controller.js";
+import concertController from "../controller/concert.controller.js";
+import {notFound} from "../middleware/not-found.middleware.js";
 
 const concertRouter = Router();
 
-concertRouter.get('/', findAll);
-concertRouter.get('/:id', findOne);
-concertRouter.post('/', [isAuth, isAdmin], create);
-concertRouter.put('/:id', [isAuth, isAdmin], update);
-concertRouter.delete('/:id', [isAuth, isAdmin], destroy);
-
-concertRouter.post('/:id/buy', isAuth, buyTicket);
+concertRouter.get('/', concertController.findAll);
+concertRouter.get('/:id', notFound, concertController.findOne);
+concertRouter.post('/', [isAuth, isAdmin], concertController.create);
+concertRouter.put('/:id', [isAuth, isAdmin, notFound], concertController.update);
+concertRouter.delete('/:id', [isAuth, isAdmin, notFound], concertController.destroy);
+concertRouter.post('/:id/buy', [isAuth, notFound], concertController.buyTicket);
 
 export default concertRouter;
