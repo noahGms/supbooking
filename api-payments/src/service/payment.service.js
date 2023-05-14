@@ -1,4 +1,5 @@
 import twilio from "twilio";
+import ip from "ip";
 
 export async function sendConfirmationSms(user, token) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -8,8 +9,19 @@ export async function sendConfirmationSms(user, token) {
   if (accountSid && authToken && twilioNumber) {
     const client = twilio(accountSid, authToken);
 
+    const currentIp = ip.address();
+    let url;
+
+    if (process.env.NODE_ENV === 'production') {
+      url = `http//${currentIp}/payments/confirm/${token}`
+    } else {
+      url = `http://${currentIp}:3004/payments/confirm/${token}`
+    }
+
+    const body = `Confirm your payment: ${url}`
+
     await client.messages.create({
-      body: 'Confirm your payment: ' + process.env.API_PAYMENTS_URL + '/confirm/' + token,
+      body: body,
       from: twilioNumber,
       to: user.phone_number,
     });
