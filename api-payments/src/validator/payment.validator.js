@@ -14,5 +14,5 @@ export const checkCreditCardSchema = Joi.object({
     number: Joi.string().required(),
     expiration: Joi.string().required(),
     cvv: Joi.string().required(),
-  }),
+  }).required(),
 });
