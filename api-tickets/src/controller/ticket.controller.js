@@ -1,7 +1,7 @@
 import {createTicketSchema} from "../validator/ticket.validator.js";
 import Ticket from "../model/ticket.model.js";
 import ticketMapper from "../mapper/ticket.mapper.js";
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 class TicketController {
   /**
@@ -66,6 +66,12 @@ class TicketController {
         }),
       });
     } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response;
+
+        return res.status(400).json({message: response.data.message});
+      }
+
       return res.status(400).json({message: error.message});
     }
   }
@@ -113,6 +119,12 @@ class TicketController {
         data: ticketMapper(ticket),
       });
     } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response;
+
+        return res.status(400).json({message: response.data.message});
+      }
+
       return res.status(400).json({message: error.message});
     }
   }

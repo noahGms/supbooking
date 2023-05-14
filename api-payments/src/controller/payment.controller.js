@@ -1,7 +1,7 @@
 import {checkCreditCardSchema, createPaymentSchema} from "../validator/payment.validator.js";
 import jwt from 'jsonwebtoken';
 import Payment from "../model/payment.model.js";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {checkCreditCard, sendConfirmationSms} from "../service/payment.service.js";
 import paymentMapper from "../mapper/payment.mapper.js";
 
@@ -80,6 +80,12 @@ class PaymentController {
         },
       });
     } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response;
+
+        return res.status(400).json({message: response.data.message});
+      }
+
       return res.status(400).json({message: error.message});
     }
   }
@@ -129,6 +135,12 @@ class PaymentController {
         message: 'Payment confirmed successfully!'
       });
     } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response;
+
+        return res.status(400).json({message: response.data.message});
+      }
+
       return res.status(400).json({message: error.message});
     }
   }

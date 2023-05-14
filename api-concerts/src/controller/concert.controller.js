@@ -1,7 +1,7 @@
 import Concert from "../model/concert.model.js";
 import concertMapper from "../mapper/concert.mapper.js";
 import {createConcertSchema, updateConcertSchema} from "../validator/concert.validator.js";
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 class ConcertController {
   /**
@@ -162,6 +162,12 @@ class ConcertController {
         confirmToken: confirmToken,
       });
     } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response;
+
+        return res.status(400).json({message: response.data.message});
+      }
+
       return res.status(400).json({message: error.message});
     }
   }
