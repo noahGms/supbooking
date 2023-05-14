@@ -1,0 +1,424 @@
+{
+	"info": {
+		"_postman_id": "10112ae4-7bf6-4574-adc2-baa4e184482f",
+		"name": "supbooking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7106005"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@dev.com\",\n    \"password\": \"Adminadmin0\",\n    \"firstname\": \"admin\",\n    \"lastname\": \"admin\",\n    \"phone_number\": \"00-00-00-00-00\",\n    \"address\": \"8 rue des potiers, 01000 Bourg-en-bresse\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_AUTH_URL}}/auth/register",
+							"host": [
+								"{{API_AUTH_URL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@dev.com\",\n    \"password\": \"Adminadmin0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_AUTH_URL}}/auth/login",
+							"host": [
+								"{{API_AUTH_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "whoami",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDUyY2RmMGMxNzdiYTRiZWU1YTFjOSIsImlhdCI6MTY4MjI1NTA5MSwiZXhwIjoxNjgyMzQxNDkxfQ.Vw7QlPef18AXJOlKc1s62RvnRqLiGNgEd_fFefwYcvw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{API_AUTH_URL}}/auth/whoami",
+							"host": [
+								"{{API_AUTH_URL}}"
+							],
+							"path": [
+								"auth",
+								"whoami"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "concerts",
+			"item": [
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_CONCERTS_URL}}/concerts/",
+							"host": [
+								"{{API_CONCERTS_URL}}"
+							],
+							"path": [
+								"concerts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_CONCERTS_URL}}/concerts/645bd1be898fbd38d642c149",
+							"host": [
+								"{{API_CONCERTS_URL}}"
+							],
+							"path": [
+								"concerts",
+								"645bd1be898fbd38d642c149"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDNiYjYxN2IyMTQxNjdlMWZiZGNmZiIsImlhdCI6MTY4MjE2MDQ4OSwiZXhwIjoxNjgyMjQ2ODg5fQ._t1vSsnOTsDgzJ122cgB1_ucl723EZ7cFzFa2PW0s3A",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Concert 2\",\n    \"date\": \"2023-01-12\",\n    \"address\": \"6 rue des potiers, 69001 Lyon\",\n    \"seats\": 14\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_CONCERTS_URL}}/concerts/",
+							"host": [
+								"{{API_CONCERTS_URL}}"
+							],
+							"path": [
+								"concerts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDMwYzE1MjE4ZjgxYjY1NGZiNjllZCIsImlhdCI6MTY4MjExNTYwNywiZXhwIjoxNjgyMjAyMDA3fQ.xP7SneUzQZEA83Gs7mNi6JkRgyX-TL-N1oT9UxWHGVc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Concert 1 updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_CONCERTS_URL}}/concerts/645e24b7d32ca04b89cf7350",
+							"host": [
+								"{{API_CONCERTS_URL}}"
+							],
+							"path": [
+								"concerts",
+								"645e24b7d32ca04b89cf7350"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDMwYzgyODNiY2Y3MjBiZThkZjk1MiIsImlhdCI6MTY4MjExNTcxNywiZXhwIjoxNjgyMjAyMTE3fQ.sJNJw4iUZHxEwq8hXjcOc4vwSiecNAXpOM_TNzO8OxE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{API_CONCERTS_URL}}/concerts/645e24b7d32ca04b89cf7350",
+							"host": [
+								"{{API_CONCERTS_URL}}"
+							],
+							"path": [
+								"concerts",
+								"645e24b7d32ca04b89cf7350"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buyTicket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDMxYmRmOTc5YjBmOTIxMjZiZjg3MSIsImlhdCI6MTY4MjExOTY1MiwiZXhwIjoxNjgyMjA2MDUyfQ.CXrVqpE9E3kRR3jEXWhGHNJY17p2CAsFSfCsHMTg-7k",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"creditCard\": {\n        \"number\": \"4418065216812678\",\n        \"cvv\": \"105\",\n        \"expiration\": \"7/24\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_CONCERTS_URL}}/concerts/6461225a05f52e409b86ffde/buy",
+							"host": [
+								"{{API_CONCERTS_URL}}"
+							],
+							"path": [
+								"concerts",
+								"6461225a05f52e409b86ffde",
+								"buy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tickets",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"concertId\": \"645bd1be898fbd38d642c149\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_TICKETS_URL}}/tickets/",
+							"host": [
+								"{{API_TICKETS_URL}}"
+							],
+							"path": [
+								"tickets",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_TICKETS_URL}}/tickets/645bdec4a099ef0f847bfa49/cancel",
+							"host": [
+								"{{API_TICKETS_URL}}"
+							],
+							"path": [
+								"tickets",
+								"645bdec4a099ef0f847bfa49",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_TICKETS_URL}}/tickets/645bd2455d797dd51369df11",
+							"host": [
+								"{{API_TICKETS_URL}}"
+							],
+							"path": [
+								"tickets",
+								"645bd2455d797dd51369df11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payments",
+			"item": [
+				{
+					"name": "processPayment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ticketId\": \"645bbddbdd2c40a4f28f36de\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PAYMENTS_URL}}/payments/process",
+							"host": [
+								"{{API_PAYMENTS_URL}}"
+							],
+							"path": [
+								"payments",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "confirmPayment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PAYMENTS_URL}}/payments/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXltZW50SWQiOiI2NDViYzY0MzUwZTliYjA0MjMyMWYxMDgiLCJ0aWNrZXRJZCI6IjY0NWJjNjQzMjc2ZWQ3ZTM1M2U5YmFhZiIsInVzZXJJZCI6IjY0NWJiNTQwOTI3NTk5YTZhYzk0MTJlOCIsImlhdCI6MTY4MzczNjEzMSwiZXhwIjoxNjgzNzM3MDMxfQ.vKBzNR33ZVxMvaxeFFWzzn2tpCxRJinpCXdPfSk_aBE",
+							"host": [
+								"{{API_PAYMENTS_URL}}"
+							],
+							"path": [
+								"payments",
+								"confirm",
+								"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXltZW50SWQiOiI2NDViYzY0MzUwZTliYjA0MjMyMWYxMDgiLCJ0aWNrZXRJZCI6IjY0NWJjNjQzMjc2ZWQ3ZTM1M2U5YmFhZiIsInVzZXJJZCI6IjY0NWJiNTQwOTI3NTk5YTZhYzk0MTJlOCIsImlhdCI6MTY4MzczNjEzMSwiZXhwIjoxNjgzNzM3MDMxfQ.vKBzNR33ZVxMvaxeFFWzzn2tpCxRJinpCXdPfSk_aBE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancelPayment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_PAYMENTS_URL}}/payments/645bd2f2db021855d82a7aea/cancel",
+							"host": [
+								"{{API_PAYMENTS_URL}}"
+							],
+							"path": [
+								"payments",
+								"645bd2f2db021855d82a7aea",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verifyCreditCard",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"creditCard\": {\n        \"number\": \"4418065216812678\",\n        \"cvv\": \"105\",\n        \"expiration\": \"7/24\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PAYMENTS_URL}}/payments/verify-credit-card",
+							"host": [
+								"{{API_PAYMENTS_URL}}"
+							],
+							"path": [
+								"payments",
+								"verify-credit-card"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
