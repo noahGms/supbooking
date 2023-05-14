@@ -3,6 +3,7 @@
 # Postman API
 
 Import supbooking.postman_collection.json and supbooking.postman_environment.json files in postman to test api
+For production, you need to use API_GATEWAY_URL variable from environment variables
 
 ## Setup Project for development
 
