@@ -1,8 +1,8 @@
-import {createPaymentSchema} from "../validator/payment.validator.js";
+import {checkCreditCardSchema, createPaymentSchema} from "../validator/payment.validator.js";
 import jwt from 'jsonwebtoken';
 import Payment from "../model/payment.model.js";
 import axios from "axios";
-import {sendConfirmationSms} from "../service/payment.service.js";
+import {checkCreditCard, sendConfirmationSms} from "../service/payment.service.js";
 import paymentMapper from "../mapper/payment.mapper.js";
 
 class PaymentController {
@@ -48,6 +48,13 @@ class PaymentController {
         }
       });
       const ticket = ticketResponse.data.data;
+
+      // check credit card
+      await checkCreditCard(
+          value.creditCard.number,
+          value.creditCard.expiration,
+          value.creditCard.cvv,
+      );
 
       const payment = await Payment.create({
         ticket: ticket.id,
@@ -141,6 +148,33 @@ class PaymentController {
 
       return res.status(200).json({
         message: 'Payment cancelled successfully!'
+      });
+    } catch (error) {
+      return res.status(400).json({message: error.message});
+    }
+  }
+
+  /**
+   * POST /payments/verify-credit-card
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
+  async verifyCreditCard(req, res) {
+    const body = req.body;
+
+    try {
+      const value = await checkCreditCardSchema.validateAsync(body);
+
+      await checkCreditCard(
+        value.creditCard.number,
+        value.creditCard.expiration,
+        value.creditCard.cvv,
+      );
+
+      return res.status(200).json({
+        message: 'Credit card verified!',
       });
     } catch (error) {
       return res.status(400).json({message: error.message});

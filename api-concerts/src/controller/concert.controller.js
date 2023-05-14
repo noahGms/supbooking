@@ -122,9 +122,19 @@ class ConcertController {
    * @returns {Promise<*>}
    */
   async buyTicket(req, res) {
+    const body = req.body;
     const concert = req.concert;
 
     try {
+      // const verify credit card from payments service
+      await axios.post(`${process.env.API_PAYMENTS_URL}/verify-credit-card`, {
+        creditCard: body.creditCard,
+      }, {
+        headers: {
+          Cookie: req.headers.cookie,
+        },
+      });
+
       // create ticket from tickets service
       const ticketResponse = await axios.post(process.env.API_TICKETS_URL, {
         concertId: concert._id,
@@ -138,6 +148,7 @@ class ConcertController {
       // process payment from payments service
       const paymentResponse = await axios.post(`${process.env.API_PAYMENTS_URL}/process`, {
         ticketId: ticket.id,
+        creditCard: body.creditCard,
       }, {
         headers: {
           Cookie: req.headers.cookie,
