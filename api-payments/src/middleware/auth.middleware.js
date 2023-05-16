@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 export const isAuth = async (req, res, next) => {
   try {
@@ -15,6 +15,10 @@ export const isAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    if (error instanceof AxiosError) {
+      return res.status(400).json({ message: error.response.data.message });
+    }
+
     return res.status(401).json({error: 'unauthorized'});
   }
 };
