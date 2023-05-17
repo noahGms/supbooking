@@ -1,5 +1,5 @@
-import twilio from "twilio";
-import ip from "ip";
+import twilio from 'twilio';
+import ip from 'ip';
 
 export async function sendConfirmationSms(user, token) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -13,12 +13,12 @@ export async function sendConfirmationSms(user, token) {
     let url;
 
     if (process.env.NODE_ENV === 'production') {
-      url = `http//${currentIp}/payments/confirm/${token}`
+      url = `http://${currentIp}/payments/confirm/${token}`;
     } else {
-      url = `http://${currentIp}:3004/payments/confirm/${token}`
+      url = `http://${currentIp}:3004/payments/confirm/${token}`;
     }
 
-    const body = `Confirm your payment: ${url}`
+    const body = `Confirm your payment: ${url}`;
 
     await client.messages.create({
       body: body,
@@ -45,18 +45,17 @@ export async function checkCreditCard(number, expiration, cvv) {
   const jcb = new RegExp('^35[0-9]{14}[0-9]*$');
 
   if (
-    !visa.test(number)
-    && !amex.test(number)
-    && !mastercard.test(number)
-    && !mastercard2.test(number)
-    && !cup1.test(number)
-    && !cup2.test(number)
-    && !disco1.test(number)
-    && !disco2.test(number)
-    && !disco3.test(number)
-    && !diners.test(number)
-    && !jcb.test(number)
-
+    !visa.test(number) &&
+    !amex.test(number) &&
+    !mastercard.test(number) &&
+    !mastercard2.test(number) &&
+    !cup1.test(number) &&
+    !cup2.test(number) &&
+    !disco1.test(number) &&
+    !disco2.test(number) &&
+    !disco3.test(number) &&
+    !diners.test(number) &&
+    !jcb.test(number)
   ) {
     throw new Error('Invalid credit card number!');
   }
